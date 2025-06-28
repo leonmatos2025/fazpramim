@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Faz pra Mim - Serviços Confiáveis em Rondônia</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Estilos para o Painel de Admin */
+    .admin-panel { background-color: #1f2937; color: white; padding: 20px; border-radius: 8px; margin-bottom: 40px; }
+    .admin-panel input, .admin-panel select { color: #1f2937; }
+    /* Animação de destaque */
+    @keyframes pulse-bg { 0% { background-color: white; } 50% { background-color: #ecfccb; } 100% { background-color: white; } }
+    .card-update-animation { animation: pulse-bg 1.5s ease-in-out; }
+    /* Estilos Gerais */
+    .formulario input, .formulario select, .formulario textarea { width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid #d1d5db; border-radius: 8px; }
+    .formulario button { width: 100%; padding: 15px; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; }
+    #btnCliente { background-color: #2563eb; }
+    .service-card { background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+    .service-card:hover { transform: translateY(-5px); box-shadow: 0 8px 12px rgba(0,0,0,0.15); }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-900 antialiased">
+
+  <!-- Painel de Administração (só aparece se ?admin=true na URL) -->
+  <div id="admin-container" class="hidden p-6 max-w-6xl mx-auto">
+    <div class="admin-panel">
+      <h2 class="text-2xl font-bold mb-4">Painel de Administração</h2>
+      <!-- Formulário para Adicionar/Editar Profissional -->
+      <form id="formAdmin" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <input type="hidden" id="adminId">
+        <input type="text" id="adminNome" placeholder="Nome do Profissional" class="p-2 rounded" required>
+        <input type="text" id="adminEspecialidade" placeholder="Especialidade" class="p-2 rounded" required>
+        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold p-2 rounded">Salvar Profissional</button>
+      </form>
+      <!-- Lista de Profissionais Editáveis -->
+      <h3 class="text-xl font-bold mb-2">Gerenciar Equipe</h3>
+      <div id="admin-lista-profissionais" class="space-y-4"></div>
+      <!-- Botão para Gerar Código -->
+      <div class="mt-6">
+        <button id="btnGerarCodigo" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Gerar Código para o Site</button>
+        <textarea id="codigoGerado" class="w-full h-40 mt-2 p-2 bg-gray-800 text-green-400 font-mono text-sm rounded" readonly placeholder="O código para colar no seu 'index.html' aparecerá aqui..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Conteúdo Público -->
+  <header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white text-center py-16 shadow-lg">
+    <div class="max-w-4xl mx-auto px-4"><h1 class="text-4xl lg:text-5xl font-bold tracking-tight">Faz pra Mim</h1><p class="text-lg mt-4 max-w-2xl mx-auto">Sua solução rápida e gerenciada para serviços do dia a dia em Rondônia.</p><button id="cta-header" class="mt-8 bg-white text-blue-700 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-gray-200">Solicitar Orçamento Rápido</button></div>
+  </header>
+
+  <main class="p-6 max-w-6xl mx-auto">
+    <section id="como-funciona" class="my-16"><h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Tudo resolvido em 3 passos</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center"><div class="bg-white p-6 rounded-lg shadow"><div class="text-4xl mb-3">1️⃣</div><h3 class="text-xl font-semibold mb-2">Solicite o Serviço</h3><p class="text-gray-600">Preencha o formulário e nossa central recebe seu pedido na hora.</p></div><div class="bg-white p-6 rounded-lg shadow"><div class="text-4xl mb-3">2️⃣</div><h3 class="text-xl font-semibold mb-2">Nós Enviamos</h3><p class="text-gray-600">Alocamos o profissional disponível mais próximo de você.</p></div><div class="bg-white p-6 rounded-lg shadow"><div class="text-4xl mb-3">3️⃣</div><h3 class="text-xl font-semibold mb-2">Problema Resolvido</h3><p class="text-gray-600">Seu serviço é feito com nossa garantia de qualidade.</p></div></div></section>
+    
+    <!-- ÁREA DE SERVIÇOS ALTERADA -->
+    <section id="servicos" class="my-16"><h2 class="text-3xl font-bold text-blue-700 mb-8 text-center">Nossos Serviços Mais Populares</h2><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <article class="service-card" data-service="Limpeza de quintal">🧹<h3>Limpeza de Quintal</h3></article>
+        <article class="service-card" data-service="Limpeza de piscina">💧<h3>Limpeza de Piscina</h3></article>
+        <article class="service-card" data-service="Manutenção de ar-condicionado">❄️<h3>Manutenção de Ar</h3></article>
+        <article class="service-card" data-service="Serviços Elétricos">💡<h3>Serviços Elétricos</h3></article> <!-- ALTERADO -->
+        <article class="service-card" data-service="Serviços Hidráulicos">🚿<h3>Serviços Hidráulicos</h3></article> <!-- ALTERADO -->
+        <article class="service-card" data-service="Faxina completa">🧼<h3>Faxina Completa</h3></article>
+    </div></section>
+    
+    <section id="profissionais-em-campo" class="my-16"><h2 class="text-3xl font-bold text-gray-800 mb-2 text-center">Nossa Equipe em Campo Agora</h2><p class="text-center text-gray-600 mb-8">Veja a atividade de nossos profissionais pela cidade.</p><div id="painel-profissionais" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div></section>
+    
+    <!-- ÁREA DO FORMULÁRIO ALTERADA -->
+    <section id="solicite-secao" class="my-16 max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-xl"><h2 class="text-3xl font-bold text-blue-700 mb-6 text-center">Chame um Profissional Agora</h2><form id="formCliente" class="formulario"><input id="nome" name="nome" type="text" placeholder="Nome completo" required><input id="whatsapp" name="whatsapp" type="tel" placeholder="WhatsApp com DDD" required><input id="cidade" name="cidade" type="text" placeholder="Sua cidade" required><input id="bairro" name="bairro" type="text" placeholder="Seu bairro" required>
+    <select id="servico" name="servico" required>
+        <option value="">Selecione o serviço</option>
+        <option value="Limpeza de quintal">Limpeza de quintal</option>
+        <option value="Limpeza de piscina">Limpeza de piscina</option>
+        <option value="Manutenção de ar-condicionado">Manutenção de ar-condicionado</option>
+        <option value="Serviços Elétricos">Serviços Elétricos</option> <!-- ALTERADO -->
+        <option value="Serviços Hidráulicos">Serviços Hidráulicos</option> <!-- ALTERADO -->
+        <option value="Faxina completa">Faxina completa</option>
+    </select>
+    <input id="datahora" name="datahora" type="datetime-local" required><textarea id="obs" name="obs" rows="3" placeholder="Detalhes do serviço (opcional)"></textarea><button type="submit" id="btnCliente">Receber Orçamento no WhatsApp</button></form></section>
+  </main>
+  <footer class="text-center py-6 bg-gray-800 text-white text-sm mt-12">© 2025 Faz pra Mim</footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+      const adminWhatsAppNumber = '5569992897968'; // SEU NÚMERO DE WHATSAPP
+
+      // --- BANCO DE DADOS DE PROFISSIONAIS ---
+      // ESTE É O BLOCO DE CÓDIGO QUE VOCÊ IRÁ ATUALIZAR
+      let profissionaisDB = [
+        { id: 1, nome: 'Carlos Silva', especialidade: 'Eletricista', status: 'disponivel', localizacao: 'Na base' },
+        { id: 2, nome: 'Mariana Costa', especialidade: 'Limpeza Pesada', status: 'ocupado', localizacao: 'Em atendimento no Bairro Centro' },
+        { id: 3, nome: 'João Ferreira', especialidade: 'Técnico em Ar-Condicionado', status: 'disponivel', localizacao: 'Aguardando chamado' },
+        // Adicione mais profissionais aqui conforme gerado pelo painel de admin
+      ];
+      
+      // *** INÍCIO DA CORREÇÃO ***
+      // Tenta carregar os dados salvos pelo admin. Se existirem, usa eles.
+      const dadosSalvos = localStorage.getItem('adminProfissionais');
+      if (dadosSalvos) {
+        profissionaisDB = JSON.parse(dadosSalvos);
+      }
+      // *** FIM DA CORREÇÃO ***
+
+      // --- Lógica do Painel de Administração ---
+      const urlParams = new URLSearchParams(window.location.search);
+      const isAdmin = urlParams.get('admin') === 'true';
+      const adminContainer = document.getElementById('admin-container');
+      
+      if (isAdmin) {
+        adminContainer.classList.remove('hidden');
+        loadAdminPanel();
+      }
+
+      function loadAdminPanel() {
+        const adminListaProfissionais = document.getElementById('admin-lista-profissionais');
+        const formAdmin = document.getElementById('formAdmin');
+        const adminId = document.getElementById('adminId');
+        const adminNome = document.getElementById('adminNome');
+        const adminEspecialidade = document.getElementById('adminEspecialidade');
+        
+        // Carrega profissionais do localStorage se existirem, senão usa o DB padrão
+        let adminProfissionais = JSON.parse(localStorage.getItem('adminProfissionais')) || profissionaisDB;
+        localStorage.setItem('adminProfissionais', JSON.stringify(adminProfissionais));
+
+        function renderAdminList() {
+          adminListaProfissionais.innerHTML = '';
+          adminProfissionais.forEach(prof => {
+            const div = document.createElement('div');
+            div.className = 'grid grid-cols-1 md:grid-cols-6 gap-2 items-center bg-gray-700 p-2 rounded';
+            div.innerHTML = `
+              <div class="col-span-2">
+                <p class="font-bold">${prof.nome}</p>
+                <p class="text-sm text-gray-400">${prof.especialidade}</p>
+              </div>
+              <select class="status-select p-2 rounded text-black" data-id="${prof.id}">
+                <option value="disponivel" ${prof.status === 'disponivel' ? 'selected' : ''}>Disponível</option>
+                <option value="ocupado" ${prof.status === 'ocupado' ? 'selected' : ''}>Ocupado</option>
+              </select>
+              <input type="text" value="${prof.localizacao}" class="localizacao-input col-span-2 p-2 rounded text-black" data-id="${prof.id}" placeholder="Localização / Atividade">
+              <div>
+                <button class="btn-admin-edit bg-yellow-500 p-2 rounded text-sm" data-id="${prof.id}">Editar</button>
+                <button class="btn-admin-delete bg-red-500 p-2 rounded text-sm" data-id="${prof.id}">X</button>
+              </div>
+            `;
+            adminListaProfissionais.appendChild(div);
+          });
+        }
+        
+        formAdmin.addEventListener('submit', e => {
+          e.preventDefault();
+          const id = adminId.value;
+          const nome = adminNome.value;
+          const especialidade = adminEspecialidade.value;
+          if (id) { // Editando
+            const prof = adminProfissionais.find(p => p.id == id);
+            prof.nome = nome;
+            prof.especialidade = especialidade;
+          } else { // Adicionando
+            const newId = adminProfissionais.length > 0 ? Math.max(...adminProfissionais.map(p => p.id)) + 1 : 1;
+            adminProfissionais.push({ id: newId, nome, especialidade, status: 'disponivel', localizacao: 'Na base' });
+          }
+          localStorage.setItem('adminProfissionais', JSON.stringify(adminProfissionais));
+          renderAdminList();
+          formAdmin.reset();
+          adminId.value = '';
+        });
+
+        adminListaProfissionais.addEventListener('change', e => {
+            const id = e.target.dataset.id;
+            const prof = adminProfissionais.find(p => p.id == id);
+            if (e.target.classList.contains('status-select')) {
+                prof.status = e.target.value;
+            }
+            if (e.target.classList.contains('localizacao-input')) {
+                prof.localizacao = e.target.value;
+            }
+            localStorage.setItem('adminProfissionais', JSON.stringify(adminProfissionais));
+        });
+
+        adminListaProfissionais.addEventListener('click', e => {
+            const id = e.target.dataset.id;
+            if (e.target.classList.contains('btn-admin-delete')) {
+                adminProfissionais = adminProfissionais.filter(p => p.id != id);
+                localStorage.setItem('adminProfissionais', JSON.stringify(adminProfissionais));
+                renderAdminList();
+            }
+            if (e.target.classList.contains('btn-admin-edit')) {
+                const prof = adminProfissionais.find(p => p.id == id);
+                adminId.value = prof.id;
+                adminNome.value = prof.nome;
+                adminEspecialidade.value = prof.especialidade;
+                window.scrollTo(0, 0);
+            }
+        });
+
+        document.getElementById('btnGerarCodigo').addEventListener('click', () => {
+            const codigo = `let profissionaisDB = ${JSON.stringify(JSON.parse(localStorage.getItem('adminProfissionais')), null, 2)};`;
+            document.getElementById('codigoGerado').value = codigo;
+        });
+
+        renderAdminList();
+      }
+
+      // --- Lógica da Visão Pública ---
+      const painelProfissionais = document.getElementById('painel-profissionais');
+
+      function renderizarPainelPublico() {
+        painelProfissionais.innerHTML = '';
+        profissionaisDB.forEach(prof => {
+          const statusDotColor = prof.status === 'disponivel' ? 'bg-green-500' : 'bg-orange-500';
+          const card = document.createElement('div');
+          card.className = 'bg-white p-4 rounded-lg shadow-md flex flex-col justify-between';
+          card.innerHTML = `
+            <div>
+              <h4 class="text-lg font-bold text-gray-900">${prof.nome}</h4>
+              <p class="text-sm text-blue-600 font-medium">${prof.especialidade}</p>
+            </div>
+            <div class="mt-4 pt-4 border-t border-gray-200">
+              <div class="flex items-center">
+                <div class="w-3 h-3 rounded-full mr-2 ${statusDotColor}"></div>
+                <p class="text-sm text-gray-700"><strong>${prof.localizacao}</strong></p>
+              </div>
+            </div>
+          `;
+          painelProfissionais.appendChild(card);
+        });
+      }
+
+      // --- Lógica de Formulários e Navegação ---
+      const formCliente = document.getElementById('formCliente');
+      formCliente.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(formCliente).entries());
+        let msg = `Olá! Solicito um orçamento pelo "Faz pra Mim".\n\n*Serviço:* ${data.servico}\n*Nome:* ${data.nome}\n*WhatsApp:* ${data.whatsapp}\n*Endereço:* ${data.cidade} - ${data.bairro}\n*Data/Hora:* ${new Date(data.datahora).toLocaleString('pt-BR')}\n*Detalhes:* ${data.obs || 'Nenhum'}`;
+        window.open(`https://wa.me/${adminWhatsAppNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+      });
+
+      const secaoSolicite = document.getElementById('solicite-secao');
+      document.getElementById('cta-header').addEventListener('click', () => secaoSolicite.scrollIntoView({ behavior: 'smooth' }));
+      
+      // LÓGICA CORRIGIDA PARA OS CARDS DE SERVIÇO
+      document.querySelectorAll('.service-card').forEach(card => {
+        card.addEventListener('click', () => {
+          // Pega o valor do atributo 'data-service' do card clicado
+          const servicoSelecionado = card.dataset.service;
+          // Define o valor do select para ser o mesmo do card
+          document.getElementById('servico').value = servicoSelecionado;
+          // Rola a página suavemente até a seção do formulário
+          secaoSolicite.scrollIntoView({ behavior: 'smooth' });
+        });
+      });
+
+      // --- Inicialização ---
+      if (!isAdmin) {
+        renderizarPainelPublico();
+      }
+    });
+  </script>
+</body>
+</html>
